@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document
@@ -19,16 +20,27 @@ public class Users {
     @Field
     private String avata;
     @Field
-    List<Projects> projects;
+    private LocalDateTime passwordUpdateTime;
+    @Field
+    private List<String> projectsId;
 
     public Users(){}
 
-    public Users(String userName, String email, String password, String avata, List<Projects> projects) {
+    public Users(String userName, String email, String password, String avata, List<String> projectsId,LocalDateTime passwordUpdateTime) {
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.avata = avata;
-        this.projects = projects;
+        this.passwordUpdateTime=passwordUpdateTime;
+        this.projectsId = projectsId;
+    }
+
+    public LocalDateTime getPasswordUpdateTime() {
+        return passwordUpdateTime;
+    }
+
+    public void setPasswordUpdateTime(LocalDateTime passwordUpdateTime) {
+        this.passwordUpdateTime = passwordUpdateTime;
     }
 
     public String getUserName() {
@@ -63,12 +75,12 @@ public class Users {
         this.avata = avata;
     }
 
-    public List<Projects> getProjects() {
-        return projects;
+    public List<String> getProjectsId() {
+        return projectsId;
     }
 
-    public void setProjects(List<Projects> projects) {
-        this.projects = projects;
+    public void setProjectsId(List<String> projectsId) {
+        this.projectsId = projectsId;
     }
 
     @Override
@@ -79,7 +91,8 @@ public class Users {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", avata='" + avata + '\'' +
-                ", projects=" + projects +
+                ", passwordUpdateTime=" + passwordUpdateTime +
+                ", projectsId=" + projectsId +
                 '}';
     }
 }
