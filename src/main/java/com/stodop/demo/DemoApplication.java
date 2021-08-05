@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class,MongoDataAutoConfiguration.class})
 @RestController
 public class DemoApplication implements CommandLineRunner {
 
