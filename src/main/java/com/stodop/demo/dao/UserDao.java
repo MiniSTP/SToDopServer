@@ -13,7 +13,7 @@ import java.util.List;
 public class UserDao {
     @Autowired
     private MongoTemplate mongoTemplate;
-    public List<Users> finAll(){
+    public List<Users> findAll(){
         return mongoTemplate.findAll(Users.class);
     }
     public void save(Users users){
