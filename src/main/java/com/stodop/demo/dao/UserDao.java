@@ -13,18 +13,22 @@ import java.util.List;
 public class UserDao {
     @Autowired
     private MongoTemplate mongoTemplate;
-    public List<Users> findAll(){
+
+    public List<Users> findAll() {
         return mongoTemplate.findAll(Users.class);
     }
-    public void save(Users users){
+
+    public void save(Users users) {
         mongoTemplate.insert(users);
     }
-    public Users findById(final String userId){
-        return mongoTemplate.findById(userId,Users.class);
+
+    public Users findById(final String userId) {
+        return mongoTemplate.findById(userId, Users.class);
     }
-    public List<Users> findByEmail(final String email){
-        Query query=new Query();
+
+    public List<Users> findByEmail(final String email) {
+        Query query = new Query();
         query.addCriteria(Criteria.where("email").is(email));
-        return mongoTemplate.find(query,Users.class);
+        return mongoTemplate.find(query, Users.class);
     }
 }
