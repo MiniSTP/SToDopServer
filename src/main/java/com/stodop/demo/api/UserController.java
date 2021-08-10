@@ -1,15 +1,13 @@
 package com.stodop.demo.api;
 
+import com.stodop.demo.component.JwtTokenProvider;
 import com.stodop.demo.dao.UserDao;
 import com.stodop.demo.model.JwtResponse;
 import com.stodop.demo.model.LoginForm;
-import com.stodop.demo.model.Users;
+import com.stodop.demo.model.User;
 import com.stodop.demo.service.UserService;
 import com.stodop.demo.utils.Responses;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,16 +20,15 @@ import java.util.*;
 @RequestMapping(path="/api/v1/user")
 public class UserController {
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
     private UserDao userDao;
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    @Value("${jwt.secret}")
-    private String secret;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
     @PostMapping(path="/register")
-    public ResponseEntity<Object> register(@RequestBody Users users){
+    public ResponseEntity<Object> register(@RequestBody User users){
         try{
-            List<Users> user= userDao.findByEmail(users.getEmail());
+            List<User> user= userDao.findByEmail(users.getEmail());
             if(!user.isEmpty()){
                 throw new Exception("Email đã tồn tại");
             }
@@ -52,7 +49,7 @@ public class UserController {
     @PostMapping(path="/login")
     public ResponseEntity<Object> login(@RequestBody LoginForm loginForm){
         try{
-            List<Users> users=userDao.findByEmail(loginForm.getEmail());
+            List<User> users=userDao.findByEmail(loginForm.getEmail());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             if(users==null||users.isEmpty()){
                 throw new Exception("Email hoặc mật khẩu không chính xác");
@@ -60,15 +57,16 @@ public class UserController {
                 if(!passwordEncoder.matches(loginForm.getPassword(),users.get(0).getPassword())){
                     throw new Exception("Email hoặc mật khẩu không chính xác");
                 }else {
-                    Map<String, Object> claims = new HashMap<>();
-                    String token = Jwts.builder().setClaims(claims).setSubject(loginForm.getEmail()).setIssuedAt(new Date(System.currentTimeMillis()))
-                            .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                            .signWith(SignatureAlgorithm.HS512, secret).compact();
+                    String token = jwtTokenProvider.genarateJwtToken(loginForm.getEmail());
                     return Responses.generateResponse("Login Successfully!", HttpStatus.OK, new JwtResponse(token));
                 }
             }
         }catch (Exception e){
             return Responses.generateResponse(e.getMessage(),HttpStatus.MULTI_STATUS,null);
         }
+    }
+    @GetMapping("/me")
+    public void getMyInfor(@RequestHeader String Authorization){
+        System.out.println(Authorization);
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Document
-public class Users {
+public class User {
     @Id
     private String id;
     @Field
@@ -24,9 +24,9 @@ public class Users {
     @Field
     private List<String> projectsId;
 
-    public Users(){}
+    public User(){}
 
-    public Users(String userName, String email, String password, String avata, List<String> projectsId,LocalDateTime passwordUpdateTime) {
+    public User(String userName, String email, String password, String avata, List<String> projectsId, LocalDateTime passwordUpdateTime) {
         this.userName = userName;
         this.email = email;
         this.password = password;
