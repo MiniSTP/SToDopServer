@@ -4,7 +4,7 @@ import com.stodop.demo.component.JwtTokenProvider;
 import com.stodop.demo.dao.UserDao;
 import com.stodop.demo.model.JwtResponse;
 import com.stodop.demo.model.LoginForm;
-import com.stodop.demo.model.User;
+import com.stodop.demo.model.Users;
 import com.stodop.demo.service.UserService;
 import com.stodop.demo.utils.Responses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +26,9 @@ public class UserController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
     @PostMapping(path="/register")
-    public ResponseEntity<Object> register(@RequestBody User users){
+    public ResponseEntity<Object> register(@RequestBody Users users){
         try{
-            List<User> user= userDao.findByEmail(users.getEmail());
+            List<Users> user= userDao.findByEmail(users.getEmail());
             if(!user.isEmpty()){
                 throw new Exception("Email đã tồn tại");
             }
@@ -49,13 +49,13 @@ public class UserController {
     @PostMapping(path="/login")
     public ResponseEntity<Object> login(@RequestBody LoginForm loginForm){
         try{
-            List<User> users=userDao.findByEmail(loginForm.getEmail());
+            List<Users> users=userDao.findByEmail(loginForm.getEmail());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             if(users==null||users.isEmpty()){
-                throw new Exception("Email hoặc mật khẩu không chính xác");
+                throw new Exception("Email không chính xác");
             }else {
                 if(!passwordEncoder.matches(loginForm.getPassword(),users.get(0).getPassword())){
-                    throw new Exception("Email hoặc mật khẩu không chính xác");
+                    throw new Exception("Mật khẩu không chính xác");
                 }else {
                     String token = jwtTokenProvider.genarateJwtToken(loginForm.getEmail());
                     return Responses.generateResponse("Login Successfully!", HttpStatus.OK, new JwtResponse(token));

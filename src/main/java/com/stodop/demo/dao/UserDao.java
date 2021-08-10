@@ -1,6 +1,6 @@
 package com.stodop.demo.dao;
 
-import com.stodop.demo.model.User;
+import com.stodop.demo.model.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,21 +14,21 @@ public class UserDao {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public List<User> findAll() {
-        return mongoTemplate.findAll(User.class);
+    public List<Users> findAll() {
+        return mongoTemplate.findAll(Users.class);
     }
 
-    public void save(User user) {
-        mongoTemplate.insert(user);
+    public void save(Users users) {
+        mongoTemplate.insert(users);
     }
 
-    public User findById(final String userId) {
-        return mongoTemplate.findById(userId, User.class);
+    public Users findById(final String userId) {
+        return mongoTemplate.findById(userId, Users.class);
     }
 
-    public List<User> findByEmail(final String email) {
+    public List<Users> findByEmail(final String email) {
         Query query = new Query();
         query.addCriteria(Criteria.where("email").is(email));
-        return mongoTemplate.find(query, User.class);
+        return mongoTemplate.find(query, Users.class);
     }
 }
