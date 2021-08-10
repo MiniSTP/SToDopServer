@@ -31,4 +31,9 @@ public class UserDao {
         query.addCriteria(Criteria.where("email").is(email));
         return mongoTemplate.find(query, Users.class);
     }
+    public List<Users> findByUsername(final String username) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userName").is(username));
+        return mongoTemplate.find(query, Users.class);
+    }
 }

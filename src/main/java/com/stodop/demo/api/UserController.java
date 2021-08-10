@@ -10,6 +10,8 @@ import com.stodop.demo.utils.Responses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,56 +19,64 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping(path="/api/v1/user")
+@RequestMapping(path = "/api/v1/user")
 public class UserController {
-    @Autowired
-    private UserService userService;
     @Autowired
     private UserDao userDao;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-    @PostMapping(path="/register")
-    public ResponseEntity<Object> register(@RequestBody Users users){
-        try{
-            List<Users> user= userDao.findByEmail(users.getEmail());
-            if(!user.isEmpty()){
+
+    @PostMapping(path = "/register")
+    public ResponseEntity<Object> register(@RequestBody Users users) {
+        try {
+            List<Users> user = userDao.findByEmail(users.getEmail());
+            if (!user.isEmpty()) {
                 throw new Exception("Email đã tồn tại");
-            }
-            else {
+            } else {
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-                List<String> projectId=new ArrayList<>();
+                List<String> projectId = new ArrayList<>();
                 users.setProjectsId(projectId);
                 users.setAvata("");
                 users.setPasswordUpdateTime(LocalDateTime.now());
                 users.setPassword(passwordEncoder.encode(users.getPassword()));
                 userDao.save(users);
-                return Responses.generateResponse("Register Successfully!", HttpStatus.OK,users);
+                return Responses.generateResponse("Register Successfully!", HttpStatus.OK, users);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return Responses.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
-    @PostMapping(path="/login")
-    public ResponseEntity<Object> login(@RequestBody LoginForm loginForm){
-        try{
-            List<Users> users=userDao.findByEmail(loginForm.getEmail());
+
+    @PostMapping(path = "/login")
+    public ResponseEntity<Object> login(@RequestBody LoginForm loginForm) {
+        try {
+            List<Users> users = userDao.findByUsername(loginForm.getEmail());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            if(users==null||users.isEmpty()){
+            if (users == null || users.isEmpty()) {
                 throw new Exception("Email không chính xác");
-            }else {
-                if(!passwordEncoder.matches(loginForm.getPassword(),users.get(0).getPassword())){
+            } else {
+                if (!passwordEncoder.matches(loginForm.getPassword(), users.get(0).getPassword())) {
                     throw new Exception("Mật khẩu không chính xác");
-                }else {
+                } else {
                     String token = jwtTokenProvider.genarateJwtToken(loginForm.getEmail());
                     return Responses.generateResponse("Login Successfully!", HttpStatus.OK, new JwtResponse(token));
                 }
             }
-        }catch (Exception e){
-            return Responses.generateResponse(e.getMessage(),HttpStatus.MULTI_STATUS,null);
+        } catch (Exception e) {
+            return Responses.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
+
     @GetMapping("/me")
-    public void getMyInfor(@RequestHeader String Authorization){
-        System.out.println(Authorization);
+    public ResponseEntity<Object> getMyInfor() {
+        try {
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<Users> users = userDao.findByUsername(userDetails.getUsername());
+            return Responses.generateResponse("Successfully!!!", HttpStatus.OK,users.get(0));
+        }
+        catch (Exception e){
+            return Responses.generateResponse(e.getMessage(),HttpStatus.MULTI_STATUS,null);
+        }
+
     }
 }
