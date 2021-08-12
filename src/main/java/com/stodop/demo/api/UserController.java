@@ -33,15 +33,22 @@ public class UserController {
             if (!user.isEmpty()) {
                 throw new Exception("Email đã tồn tại");
             } else {
-                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-                List<String> projectId = new ArrayList<>();
-                users.setProjectsId(projectId);
-                users.setAvata("");
-                users.setPasswordUpdateTime(LocalDateTime.now());
-                users.setPassword(passwordEncoder.encode(users.getPassword()));
-                userDao.save(users);
-                return Responses.generateResponse("Register Successfully!", HttpStatus.OK, users);
+                user = userDao.findByUsername(users.getUserName());
+                if (!user.isEmpty()) {
+                    throw new Exception("Username đã tồn tại");
+                } else {
+                    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                    List<String> projectId = new ArrayList<>();
+                    users.setProjectsId(projectId);
+                    users.setAvata("");
+                    users.setPasswordUpdateTime(LocalDateTime.now());
+                    users.setPassword(passwordEncoder.encode(users.getPassword()));
+                    userDao.save(users);
+                    return Responses.generateResponse("Register Successfully!", HttpStatus.OK, users);
+                }
             }
+
+
         } catch (Exception e) {
             return Responses.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
