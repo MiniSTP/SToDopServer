@@ -26,7 +26,7 @@ public class Users {
 
     public Users(){}
 
-    public Users(String userName, String email, String password, String avata, List<String> projectsId,LocalDateTime passwordUpdateTime) {
+    public Users(String userName, String email, String password, String avata, List<String> projectsId, LocalDateTime passwordUpdateTime) {
         this.userName = userName;
         this.email = email;
         this.password = password;
