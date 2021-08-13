@@ -39,10 +39,37 @@ public class TaskController {
                 tasks.setCommentsId(commentId);
                 tasks.setActivitysId(activityId);
                 taskDao.save(tasks);
-                return Responses.generateResponse("Register Successfully!", HttpStatus.OK, tasks);
+                return Responses.generateResponse("Add Task Successfully!", HttpStatus.OK, tasks);
             }
             else{
-                throw new Exception("you have not authenticated!");
+                throw new Exception("You Have Not Authenticated!");
+            }
+        }catch (Exception e){
+            return Responses.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        }
+    }
+    @PutMapping
+    public ResponseEntity<Object> editTask(@RequestParam(name="id") String taskId,@RequestBody Tasks tasks, @RequestHeader("Authorization") String headerToken){
+        try{
+            if(jwtTokenProvider.validateToken(headerToken)){
+                Tasks taskInDb= taskDao.findById(taskId);
+                if(taskInDb==null){
+                    throw new Exception("Task Cannot Found!");
+                }
+                taskInDb.setActivitysId(tasks.getActivitysId());
+                taskInDb.setPriority(tasks.getPriority());
+                taskInDb.setLable(tasks.getLable());
+                taskInDb.setSubTasksId(tasks.getSubTasksId());
+                taskInDb.setAcchived(tasks.getAcchived());
+                taskInDb.setCommentsId(tasks.getCommentsId());
+                taskInDb.setDescription(tasks.getDescription());
+                taskInDb.setSchedule(tasks.getSchedule());
+                taskInDb.setTitle(tasks.getTitle());
+                taskDao.save(taskInDb);
+                return Responses.generateResponse("Update Task Successfully!", HttpStatus.OK, taskInDb);
+            }
+            else{
+                throw new Exception("You Have Not Authenticated!");
             }
         }catch (Exception e){
             return Responses.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);

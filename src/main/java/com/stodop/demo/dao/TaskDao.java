@@ -29,6 +29,6 @@ public class TaskDao {
         return tasks;
     }
     public void save(Tasks tasks){
-        mongoTemplate.insert(tasks);
+        mongoTemplate.save(tasks);
     }
 }
