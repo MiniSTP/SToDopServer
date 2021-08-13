@@ -33,31 +33,26 @@ public class UserController {
             if (!user.isEmpty()) {
                 throw new Exception("Email đã tồn tại");
             } else {
-                user = userDao.findByUsername(users.getUserName());
-                if (!user.isEmpty()) {
-                    throw new Exception("Username đã tồn tại");
-                } else {
-                    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-                    List<String> projectId = new ArrayList<>();
-                    users.setProjectsId(projectId);
-                    users.setAvata("");
-                    users.setPasswordUpdateTime(LocalDateTime.now());
-                    users.setPassword(passwordEncoder.encode(users.getPassword()));
-                    userDao.save(users);
-                    return Responses.generateResponse("Register Successfully!", HttpStatus.OK, users);
-                }
+                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                List<String> projectId = new ArrayList<>();
+                users.setProjectsId(projectId);
+                users.setAvata("");
+                users.setPasswordUpdateTime(LocalDateTime.now());
+                users.setPassword(passwordEncoder.encode(users.getPassword()));
+                userDao.save(users);
+                return Responses.generateResponse("Register Successfully!", HttpStatus.OK, users);
             }
-
-
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             return Responses.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
+
     }
 
     @PostMapping(path = "/login")
     public ResponseEntity<Object> login(@RequestBody LoginForm loginForm) {
         try {
-            List<Users> users = userDao.findByUsername(loginForm.getEmail());
+            List<Users> users = userDao.findByEmail(loginForm.getEmail());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             if (users == null || users.isEmpty()) {
                 throw new Exception("Email không chính xác");
@@ -78,11 +73,10 @@ public class UserController {
     public ResponseEntity<Object> getMyInfor() {
         try {
             UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Users> users = userDao.findByUsername(userDetails.getUsername());
-            return Responses.generateResponse("Successfully!!!", HttpStatus.OK,users.get(0));
-        }
-        catch (Exception e){
-            return Responses.generateResponse(e.getMessage(),HttpStatus.MULTI_STATUS,null);
+            List<Users> users = userDao.findByEmail(userDetails.getUsername());
+            return Responses.generateResponse("Successfully!!!", HttpStatus.OK, users.get(0));
+        } catch (Exception e) {
+            return Responses.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
 
     }

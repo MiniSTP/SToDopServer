@@ -22,7 +22,7 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
     public boolean validateToken(String authToken) {

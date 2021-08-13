@@ -17,7 +17,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Mặc định mình sẽ để tất cả là ROLE_USER. Để demo cho đơn giản.
         return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
@@ -28,7 +27,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserName();
+        return user.getEmail();
     }
 
     @Override
