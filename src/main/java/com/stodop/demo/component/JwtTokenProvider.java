@@ -39,9 +39,9 @@ public class JwtTokenProvider {
             }
             String email= getEmail(jwtToken);
             List<Users> users= userDao.findByEmail(email);
-//            if(users==null|| users.isEmpty()){
-//                throw new MalformedJwtException("Email Not Found");
-//            }
+            if(users==null|| users.isEmpty()){
+                throw new MalformedJwtException("Email Not Found");
+            }
             Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
             return true;
         } catch (SignatureException e) {
