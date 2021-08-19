@@ -5,8 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -30,5 +33,15 @@ public class UserDao {
         Query query = new Query();
         query.addCriteria(Criteria.where("email").is(email));
         return mongoTemplate.find(query, Users.class);
+    }
+
+    public void createNewUser(Users users){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        List<String> projectId = new ArrayList<>();
+        users.setProjectsId(projectId);
+        users.setPasswordUpdateTime(LocalDateTime.now());
+        users.setPassword(passwordEncoder.encode(users.getPassword()));
+        if (users.getAvata()!=null) users.setAvata("");
+        mongoTemplate.insert(users);
     }
 }
