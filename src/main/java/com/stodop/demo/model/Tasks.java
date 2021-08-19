@@ -3,6 +3,7 @@ package com.stodop.demo.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -10,11 +11,11 @@ public class Tasks {
     @Id
     private String id;
     @Field
-    private String titile;
+    private String title;
     @Field
     private String description;
     @Field
-    private Date schedule;
+    private LocalDateTime schedule;
     @Field
     private List<String> subTasksId;
     @Field
@@ -30,8 +31,8 @@ public class Tasks {
 
     public Tasks(){};
 
-    public Tasks(String titile, String description, Date schedule, List<String> subTasksId, List<String> commentsId, List<String> activitysId, Boolean acchived, String priority, String lable) {
-        this.titile = titile;
+    public Tasks(String title, String description, LocalDateTime schedule, List<String> subTasksId, List<String> commentsId, List<String> activitysId, Boolean acchived, String priority, String lable) {
+        this.title = title;
         this.description = description;
         this.schedule = schedule;
         this.subTasksId = subTasksId;
@@ -50,19 +51,19 @@ public class Tasks {
         this.id = id;
     }
 
-    public String getTitile() {
-        return titile;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitile(String titile) {
-        this.titile = titile;
+    public void setTitle(String titile) {
+        this.title = titile;
     }
 
     @Override
     public String toString() {
         return "Tasks{" +
                 "id='" + id + '\'' +
-                ", titile='" + titile + '\'' +
+                ", titile='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", schedule=" + schedule +
                 ", subTasksId=" + subTasksId +
@@ -82,11 +83,11 @@ public class Tasks {
         this.description = description;
     }
 
-    public Date getSchedule() {
+    public LocalDateTime getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(Date schedule) {
+    public void setSchedule(LocalDateTime schedule) {
         this.schedule = schedule;
     }
 
